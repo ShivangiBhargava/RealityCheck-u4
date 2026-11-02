@@ -20,14 +20,15 @@ type AppUser = {
 type NavItem = {
   href: string
   label: string
+  mobileLabel: string
   icon: LucideIcon
   key: 'dashboard' | 'explore' | 'account'
 }
 
 const navItems: NavItem[] = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard, key: 'dashboard' },
-  { href: '/explore', label: 'Explore tasks', icon: Compass, key: 'explore' },
-  { href: '/account', label: 'My activity', icon: ClipboardCheck, key: 'account' },
+  { href: '/', label: 'Dashboard', mobileLabel: 'Dashboard', icon: LayoutDashboard, key: 'dashboard' },
+  { href: '/explore', label: 'Explore tasks', mobileLabel: 'Explore', icon: Compass, key: 'explore' },
+  { href: '/account', label: 'My activity', mobileLabel: 'Activity', icon: ClipboardCheck, key: 'account' },
 ]
 
 function NavLinks({ active, mobile = false }: { active: NavItem['key']; mobile?: boolean }) {
@@ -53,7 +54,7 @@ function NavLinks({ active, mobile = false }: { active: NavItem['key']; mobile?:
             )}
           >
             <Icon aria-hidden="true" className="size-4 shrink-0" />
-            {item.label}
+            {mobile ? item.mobileLabel : item.label}
           </Link>
         )
       })}

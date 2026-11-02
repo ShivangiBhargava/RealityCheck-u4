@@ -87,11 +87,11 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         </p>
       </section>
 
-      <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8">
+      <section className="flex min-h-screen items-start justify-center px-3 py-5 sm:px-8 lg:items-center lg:py-8">
         <div className="w-full max-w-md">
-          <div className="mb-6 lg:hidden"><Brand /></div>
+          <div className="mb-3 lg:hidden"><Brand /></div>
           <Card className="border-border/80 shadow-xl shadow-foreground/5">
-            <CardHeader className="gap-2">
+            <CardHeader className="gap-2 p-4 pb-0 sm:p-6 sm:pb-0">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
                 RealityCheck
               </p>
@@ -104,7 +104,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
                   : 'Sign in to manage tasks, evidence, and rewards.'}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-4 pb-4 pt-4 sm:px-6 sm:pb-6">
               {error ? (
                 <Alert variant="destructive" className="mb-5">
                   <AlertTitle>We could not sign you in</AlertTitle>
@@ -112,7 +112,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
                 </Alert>
               ) : null}
               <form onSubmit={handleSubmit}>
-                <FieldGroup>
+                <FieldGroup className="gap-3">
                   {isSignUp ? (
                     <Field>
                       <FieldLabel htmlFor="name">Name</FieldLabel>
@@ -155,7 +155,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
                       <FieldDescription>Use at least 8 characters.</FieldDescription>
                     ) : null}
                   </Field>
-                  <Button type="submit" size="lg" disabled={pending} className="mt-2 w-full">
+                  <Button type="submit" size="lg" disabled={pending} className="mt-1 w-full">
                     {pending ? (
                       <LoaderCircle aria-hidden="true" data-icon="inline-start" className="animate-spin" />
                     ) : (
@@ -166,7 +166,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
                 </FieldGroup>
               </form>
             </CardContent>
-            <CardFooter className="justify-center border-t border-border bg-muted/30 text-center text-sm text-muted-foreground">
+            <CardFooter className="justify-center border-t border-border bg-muted/30 px-4 py-3 text-center text-sm text-muted-foreground sm:px-6">
               {isSignUp ? 'Already have an account?' : 'New to RealityCheck?'}{' '}
               <Link
                 href={isSignUp ? '/sign-in' : '/sign-up'}

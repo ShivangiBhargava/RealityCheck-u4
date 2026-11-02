@@ -36,6 +36,7 @@ export function SignOutButton() {
         variant="ghost"
         size="sm"
         disabled={pending}
+        aria-label={pending ? 'Signing out' : 'Sign out'}
         onClick={handleSignOut}
         className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
       >
