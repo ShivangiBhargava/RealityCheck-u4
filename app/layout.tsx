@@ -3,24 +3,15 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: {
+    default: 'RealityCheck — Local eyes, real impact',
+    template: '%s | RealityCheck',
+  },
+  description:
+    'Post neighborhood checks, submit private evidence, and review every reward before a PayPal sandbox payout.',
+  applicationName: 'RealityCheck',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
+    icon: '/icon.svg',
     apple: '/apple-icon.png',
   },
 }
@@ -28,8 +19,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
+    { media: '(prefers-color-scheme: light)', color: '#f5f8fc' },
+    { media: '(prefers-color-scheme: dark)', color: '#09182d' },
   ],
 }
 
@@ -40,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="min-h-screen antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
