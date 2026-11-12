@@ -94,9 +94,6 @@ export function AppShell({
                 <UserRound aria-hidden="true" className="size-4 text-sidebar-primary" />
                 Clear proof. Fair rewards.
               </div>
-              <p className="text-xs leading-relaxed text-sidebar-foreground/70">
-                Every submission stays private. A person always makes the final review.
-              </p>
               <Link
                 href="/tasks/new"
                 className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-sidebar-primary hover:underline"

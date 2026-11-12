@@ -82,9 +82,6 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             Share a clear task, collect private evidence, and let people make the final call.
           </p>
         </div>
-        <p className="relative z-10 text-xs text-sidebar-foreground/60">
-          PayPal payouts run in sandbox mode during this preview.
-        </p>
       </section>
 
       <section className="flex min-h-screen items-start justify-center px-3 py-5 sm:px-8 lg:items-center lg:py-8">
