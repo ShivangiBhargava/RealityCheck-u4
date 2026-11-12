@@ -156,10 +156,11 @@ export async function POST(request: NextRequest) {
         caption: parsed.data.evidence,
       })
     } catch (error) {
-      console.error(
-        '[realitycheck] Automated evidence review unavailable',
-        error instanceof Error ? error.name : 'UnknownError',
-      )
+      // Avoid logging the prompt, image, credentials, or raw provider response.
+      console.error('[realitycheck] Automated evidence review unavailable', {
+        model: AI_REVIEW_MODEL,
+        errorName: error instanceof Error ? error.name : 'UnknownError',
+      })
     }
 
     const outcome = await db.transaction(async (tx) => {

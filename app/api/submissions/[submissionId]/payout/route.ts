@@ -14,6 +14,16 @@ type RouteContext = {
   params: Promise<{ submissionId: string }>
 }
 
+type PayPalErrorPayload = {
+  name?: unknown
+  debug_id?: unknown
+  details?: Array<{
+    field?: unknown
+    issue?: unknown
+  }>
+  batch_header?: { payout_batch_id?: unknown }
+}
+
 function getSenderBatchId(submissionId: string) {
   return `rc_${createHash('sha256').update(submissionId).digest('hex').slice(0, 27)}`
 }
@@ -23,6 +33,20 @@ async function markPayoutStatus(submissionId: string, payoutStatus: string) {
     .update(submissions)
     .set({ payoutStatus, updatedAt: new Date() })
     .where(eq(submissions.id, submissionId))
+}
+
+function getPayPalRejectionMessage(name: string) {
+  switch (name.toUpperCase()) {
+    case 'INSUFFICIENT_FUNDS':
+      return 'The PayPal Sandbox sender does not have enough funds. Add Sandbox balance and try again.'
+    case 'AUTHORIZATION_ERROR':
+    case 'PERMISSION_DENIED':
+      return 'PayPal denied payout access. Reconnect the Sandbox sender account and verify Payouts permission is enabled.'
+    case 'VALIDATION_ERROR':
+      return 'PayPal rejected the payout details. Verify the recipient’s PayPal Sandbox email and task reward amount.'
+    default:
+      return 'PayPal rejected the payout. Verify the Sandbox sender has Payouts access and the recipient details are correct.'
+  }
 }
 
 export async function POST(request: NextRequest, { params }: RouteContext) {
@@ -146,34 +170,49 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json(
       {
         error:
-          'PayPal did not confirm the request. Check the sandbox payout history before retrying.',
+          'PayPal did not confirm the request. Check the Sandbox payout history before retrying.',
         code: 'payout_status_unknown',
       },
       { status: 502 },
     )
   }
 
-  const payload = (await response.json().catch(() => null)) as
-    | {
-        name?: unknown
-        batch_header?: { payout_batch_id?: unknown }
-      }
-    | null
+  const payload = (await response.json().catch(() => null)) as PayPalErrorPayload | null
 
   if (!response.ok) {
-    const errorName = typeof payload?.name === 'string' ? payload.name : ''
+    const errorName = typeof payload?.name === 'string' ? payload.name : 'UNKNOWN_ERROR'
+    const debugId = typeof payload?.debug_id === 'string' ? payload.debug_id : undefined
+    const issues = Array.isArray(payload?.details)
+      ? payload.details
+          .map((detail) => ({
+            field: typeof detail.field === 'string' ? detail.field : undefined,
+            issue: typeof detail.issue === 'string' ? detail.issue : undefined,
+          }))
+          .filter((detail) => detail.field || detail.issue)
+      : []
     const statusIsUncertain =
       response.status >= 500 ||
       response.status === 408 ||
       response.status === 409 ||
       errorName.toLowerCase().includes('duplicate')
+
+    // Log PayPal's safe diagnostic identifiers, not the recipient email, access token,
+    // or raw response body. The debug ID can be used when contacting PayPal support.
+    console.error('[realitycheck] PayPal payout rejected', {
+      status: response.status,
+      name: errorName,
+      debugId,
+      issues,
+    })
+
     await markPayoutStatus(submissionId, statusIsUncertain ? 'unknown' : 'failed')
     return NextResponse.json(
       {
         error: statusIsUncertain
-          ? 'PayPal did not confirm the request. Check the sandbox payout history before retrying.'
-          : 'PayPal rejected the payout request. Review the payout details and try again.',
+          ? 'PayPal did not confirm the request. Check the Sandbox payout history before retrying.'
+          : getPayPalRejectionMessage(errorName),
         code: statusIsUncertain ? 'payout_status_unknown' : 'payout_failed',
+        ...(debugId ? { reference: debugId } : {}),
       },
       { status: 502 },
     )
@@ -185,7 +224,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json(
       {
         error:
-          'PayPal accepted the request but did not return a batch reference. Check sandbox payout history before retrying.',
+          'PayPal accepted the request but did not return a batch reference. Check Sandbox payout history before retrying.',
         code: 'payout_status_unknown',
       },
       { status: 502 },
@@ -219,7 +258,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json(
       {
         error:
-          'PayPal accepted the request, but the app could not save its reference. Check sandbox payout history before retrying.',
+          'PayPal accepted the request, but the app could not save its reference. Check Sandbox payout history before retrying.',
         code: 'payout_status_unknown',
       },
       { status: 502 },
