@@ -8,7 +8,9 @@ import {
 } from '@vercel/connect'
 import { headers } from 'next/headers'
 
-export const PAYPAL_CONNECTOR_UID = 'paypal/realitycheck-paypal-payouts'
+// Allow connector UID to be configured via env var if Vercel Connect uses a custom slug
+export const PAYPAL_CONNECTOR_UID =
+  process.env.PAYPAL_CONNECTOR_UID?.trim() || 'paypal/realitycheck-paypal-payouts'
 export const PAYPAL_PAYOUT_SCOPE = 'https://uri.paypal.com/payments/payouts'
 
 function getSubject(userId: string) {
@@ -35,7 +37,7 @@ export async function getPayPalConnectionStatus(
     ) {
       return 'not_connected'
     }
-    console.error('[realitycheck] PayPal connection status unavailable')
+    console.error('[realitycheck] PayPal connection status unavailable', error instanceof Error ? error.message : error)
     return 'unavailable'
   }
 }

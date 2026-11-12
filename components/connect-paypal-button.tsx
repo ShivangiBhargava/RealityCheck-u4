@@ -33,8 +33,13 @@ export function ConnectPayPalButton({
       } else {
         window.location.href = result.url
       }
-    } catch {
-      setError('We could not start PayPal authorization. Please try again.')
+    } catch (err) {
+      console.error('[realitycheck] Connect PayPal error:', err)
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'We could not start PayPal authorization. Please check Vercel Connect settings.',
+      )
       setPending(false)
     }
   }
