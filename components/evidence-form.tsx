@@ -9,7 +9,13 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
-export function EvidenceForm({ taskId }: { taskId: string }) {
+export function EvidenceForm({
+  taskId,
+  allowTravelerSharing,
+}: {
+  taskId: string
+  allowTravelerSharing: boolean
+}) {
   const router = useRouter()
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
@@ -56,6 +62,28 @@ export function EvidenceForm({ taskId }: { taskId: string }) {
           <Input id="evidenceFile" name="evidenceFile" type="file" accept="image/jpeg,image/png,image/webp" required />
           <FieldDescription>JPG, PNG, or WebP. Maximum 6 MB. Stored privately for this task.</FieldDescription>
         </Field>
+        {allowTravelerSharing ? (
+          <Field>
+            <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/35 p-4">
+              <input
+                id="shareWithTravelers"
+                name="shareWithTravelers"
+                type="checkbox"
+                value="on"
+                aria-describedby="shareWithTravelers-help"
+                className="mt-1 size-4 shrink-0 rounded border-input accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              />
+              <div className="flex flex-col gap-1">
+                <FieldLabel htmlFor="shareWithTravelers" className="cursor-pointer">
+                  Share this report with other travelers
+                </FieldLabel>
+                <FieldDescription id="shareWithTravelers-help" className="leading-relaxed">
+                  Optional and off by default. If you opt in, your note, photo, and AI visual check are visible to signed-in RealityCheck travelers only after the task owner approves. Avoid faces, names, or sensitive details.
+                </FieldDescription>
+              </div>
+            </div>
+          </Field>
+        ) : null}
         <Field>
           <FieldLabel htmlFor="payoutEmail">PayPal email for this reward</FieldLabel>
           <Input id="payoutEmail" name="payoutEmail" type="email" autoComplete="email" required maxLength={254} placeholder="you@example.com" />

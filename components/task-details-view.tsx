@@ -160,7 +160,10 @@ export function TaskDetailsView({
                   <AlertDescription>Your evidence is already on file. The task owner makes the final decision.</AlertDescription>
                 </Alert>
               ) : acceptsSubmissions ? (
-                <EvidenceForm taskId={task.id} />
+                <EvidenceForm
+                  taskId={task.id}
+                  allowTravelerSharing={task.category === 'Accessibility'}
+                />
               ) : (
                 <Alert variant="destructive">
                   <AlertTitle>Submissions are closed</AlertTitle>

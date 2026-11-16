@@ -21,16 +21,27 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
       pathname: submissions.evidencePathname,
       contributorId: submissions.userId,
       ownerId: tasks.userId,
+      status: submissions.status,
+      shareWithTravelers: submissions.shareWithTravelers,
+      createdAt: submissions.createdAt,
     })
     .from(submissions)
     .innerJoin(tasks, eq(submissions.taskId, tasks.id))
     .where(eq(submissions.id, submissionId))
     .limit(1)
 
-  if (
-    !record ||
-    (record.contributorId !== user.id && record.ownerId !== user.id)
-  ) {
+  if (!record) return new NextResponse('Not found', { status: 404 })
+
+  const ownerOrContributor =
+    record.contributorId === user.id || record.ownerId === user.id
+  const approvedStatuses = ['approved', 'payout_submitted', 'paid', 'payout_failed']
+  const recentCutoff = Date.now() - 90 * 24 * 60 * 60 * 1000
+  const sharedWithTravelers =
+    record.shareWithTravelers &&
+    approvedStatuses.includes(record.status) &&
+    record.createdAt.getTime() >= recentCutoff
+
+  if (!ownerOrContributor && !sharedWithTravelers) {
     return new NextResponse('Not found', { status: 404 })
   }
 
@@ -46,7 +57,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         status: 304,
         headers: {
           ETag: result.blob.etag,
-          'Cache-Control': 'private, no-cache',
+          'Cache-Control': 'private, no-store',
           'X-Content-Type-Options': 'nosniff',
         },
       })
@@ -57,7 +68,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         'Content-Type': result.blob.contentType,
         'Content-Disposition': 'inline',
         ETag: result.blob.etag,
-        'Cache-Control': 'private, no-cache',
+        'Cache-Control': 'private, no-store',
         'X-Content-Type-Options': 'nosniff',
       },
     })

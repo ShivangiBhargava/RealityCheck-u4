@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: '%s | RealityCheck',
   },
   description:
-    'Post neighborhood checks, submit private evidence, and review every reward before a PayPal sandbox payout.',
+    'Find recent, consent-shared accessibility reports or ask a local scout to verify a place. Post neighborhood checks and review every reward before payout.',
   applicationName: 'RealityCheck',
   icons: {
     icon: '/icon.svg',

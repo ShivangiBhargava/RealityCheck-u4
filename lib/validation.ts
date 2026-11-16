@@ -23,6 +23,14 @@ export const submissionFieldsSchema = z.object({
   taskId: z.string().uuid(),
   evidence: z.string().trim().min(10).max(800),
   payoutEmail: z.string().trim().email().max(254).transform((value) => value.toLowerCase()),
+  shareWithTravelers: z.boolean().default(false),
+})
+
+export const accessibilityQuestionSchema = z.object({
+  venue: z.string().trim().min(2).max(120),
+  location: z.string().trim().min(2).max(100),
+  address: z.string().trim().min(5).max(180),
+  question: z.string().trim().min(8).max(280),
 })
 
 export const reviewDecisionSchema = z.object({

@@ -83,6 +83,7 @@ export const submissions = pgTable(
     userId: text('userId').notNull(),
     evidence: text('evidence').notNull(),
     evidencePathname: text('evidencePathname').notNull(),
+    shareWithTravelers: boolean('shareWithTravelers').notNull().default(false),
     payoutEmail: text('payoutEmail').notNull(),
     aiReview: jsonb('aiReview').$type<EvidenceReview>().notNull(),
     aiModel: text('aiModel').notNull(),

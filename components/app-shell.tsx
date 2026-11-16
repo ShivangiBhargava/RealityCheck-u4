@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import {
+  Accessibility,
   ArrowUpRight,
   ClipboardCheck,
   Compass,
@@ -22,11 +23,12 @@ type NavItem = {
   label: string
   mobileLabel: string
   icon: LucideIcon
-  key: 'dashboard' | 'explore' | 'account'
+  key: 'dashboard' | 'accessibility' | 'explore' | 'account'
 }
 
 const navItems: NavItem[] = [
   { href: '/', label: 'Dashboard', mobileLabel: 'Dashboard', icon: LayoutDashboard, key: 'dashboard' },
+  { href: '/accessibility', label: 'Access reports', mobileLabel: 'Reports', icon: Accessibility, key: 'accessibility' },
   { href: '/explore', label: 'Explore tasks', mobileLabel: 'Explore', icon: Compass, key: 'explore' },
   { href: '/account', label: 'My activity', mobileLabel: 'Activity', icon: ClipboardCheck, key: 'account' },
 ]

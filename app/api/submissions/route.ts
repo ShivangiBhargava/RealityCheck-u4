@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
     taskId: formData.get('taskId'),
     evidence: formData.get('evidence'),
     payoutEmail: formData.get('payoutEmail'),
+    shareWithTravelers: formData.get('shareWithTravelers') === 'on',
   })
   const file = formData.get('evidenceFile')
 
@@ -82,6 +83,7 @@ export async function POST(request: NextRequest) {
     .select({
       id: tasks.id,
       title: tasks.title,
+      category: tasks.category,
       criteria: tasks.criteria,
       status: tasks.status,
       userId: tasks.userId,
@@ -193,6 +195,8 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           evidence: parsed.data.evidence,
           evidencePathname: blob.pathname,
+          shareWithTravelers:
+            initialTask.category === 'Accessibility' && parsed.data.shareWithTravelers,
           payoutEmail: parsed.data.payoutEmail,
           aiReview,
           aiModel: AI_REVIEW_MODEL,

@@ -52,9 +52,16 @@ export function SubmissionCard({
     <Card>
       <CardHeader className="gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <Badge variant={submission.status === 'rejected' ? 'outline' : 'secondary'}>
-            {getSubmissionStatusLabel(submission.status)}
-          </Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant={submission.status === 'rejected' ? 'outline' : 'secondary'}>
+              {getSubmissionStatusLabel(submission.status)}
+            </Badge>
+            {submission.shareWithTravelers ? (
+              <Badge variant="outline">
+                {submission.status === 'pending_review' ? 'Share after approval' : 'Shared with travelers'}
+              </Badge>
+            ) : null}
+          </div>
           <span className="text-xs text-muted-foreground">Submitted {formatDate(submission.createdAt)}</span>
         </div>
         <div>
