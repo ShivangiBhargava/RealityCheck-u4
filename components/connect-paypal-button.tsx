@@ -16,24 +16,34 @@ export function ConnectPayPalButton({
   async function handleConnect() {
     setPending(true)
     setError('')
+
+    const isFramed = window.self !== window.top
+    const authorizationTab = isFramed ? window.open('about:blank', '_blank') : null
+
+    if (isFramed && !authorizationTab) {
+      setError('Allow pop-ups to continue to PayPal authorization.')
+      setPending(false)
+      return
+    }
+
+    if (authorizationTab) authorizationTab.opener = null
+
     try {
       const result = await startPayPalAuthorizationAction(returnTo)
       if (!result.url) {
+        authorizationTab?.close()
         setError(result.error ?? 'We could not start PayPal authorization.')
         setPending(false)
         return
       }
 
-      if (window.self !== window.top) {
-        const tab = window.open(result.url, '_blank', 'noopener,noreferrer')
-        if (!tab) {
-          setError('Allow pop-ups to continue to PayPal authorization.')
-          setPending(false)
-        }
+      if (authorizationTab) {
+        authorizationTab.location.replace(result.url)
       } else {
         window.location.href = result.url
       }
     } catch (err) {
+      authorizationTab?.close()
       console.error('[realitycheck] Connect PayPal error:', err)
       setError(
         err instanceof Error
